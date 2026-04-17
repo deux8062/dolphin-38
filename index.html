@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DOLPHIN 돌핀 — 삼팔광땡</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: radial-gradient(ellipse at center, #2a2a2a 0%, #0e0e0e 100%);
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      user-select: none; overflow: hidden;
+    }
+
+    /* ═══════════════════════════════
+       STRAP TOP
+    ═══════════════════════════════ */
+    .strap-top {
+      width: 196px; height: 72px;
+      background: linear-gradient(180deg, #191919 0%, #121212 100%);
+      border-radius: 10px 10px 0 0;
+      border: 2px solid #222; border-bottom: none;
+      position: relative;
+      /* 100M 워터레지스턴스 텍스트 */
+    }
+    .strap-top::before {
+      content: '100M';
+      position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+      font-size: 9px; letter-spacing: 3px; color: #c86000; font-weight: bold;
+    }
+    /* 스트랩 구멍들 */
+    .strap-top::after {
+      content: '';
+      position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #0a0a0a; border: 1px solid #222;
+      box-shadow: 0 -9px 0 1px #0a0a0a, 0 -18px 0 1px #0a0a0a;
+    }
+
+    /* ═══════════════════════════════
+       WATCH CASE
+    ═══════════════════════════════ */
+    .watch-case {
+      position: relative;
+      width: 262px; height: 268px;
+      /* 실제 시계와 같은 어두운 차콜 플라스틱 */
+      background:
+        radial-gradient(ellipse at 28% 18%, #404040 0%, transparent 55%),
+        radial-gradient(ellipse at 75% 80%, #1a1a1a 0%, transparent 50%),
+        linear-gradient(155deg, #323232 0%, #1e1e1e 45%, #262626 100%);
+      border-radius: 34px;
+      border: 2px solid #404040;
+      box-shadow:
+        inset 0 2px 0 rgba(255,255,255,.09),
+        inset 2px 0 3px rgba(255,255,255,.03),
+        inset -2px 0 3px rgba(0,0,0,.2),
+        inset 0 -3px 8px rgba(0,0,0,.55),
+        0 10px 40px rgba(0,0,0,.85),
+        0 2px 8px rgba(0,0,0,.6);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 20px 14px 18px;
+      gap: 0;
+    }
+
+    /* 케이스 내부 어두운 면 (깊이감) */
+    .watch-case::before {
+      content: '';
+      position: absolute; inset: 8px;
+      border-radius: 28px;
+      background: linear-gradient(160deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.15) 100%);
+      pointer-events: none;
+    }
+
+    /* ── 코너 나사 (4개) ── */
+    .screw {
+      position: absolute;
+      width: 11px; height: 11px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 38% 30%, #bbb, #555 70%);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,.4), 0 1px 3px rgba(0,0,0,.7);
+      z-index: 10;
+    }
+    /* 나사 홈 (십자) */
+    .screw::before, .screw::after {
+      content: ''; position: absolute;
+      background: rgba(0,0,0,.55);
+      top: 50%; left: 15%; right: 15%; height: 1.5px;
+      transform: translateY(-50%);
+    }
+    .screw::after { transform: translateY(-50%) rotate(90deg); }
+    .screw.tl { top: 18px; left: 18px; }
+    .screw.tr { top: 18px; right: 18px; }
+    .screw.bl { bottom: 18px; left: 18px; }
+    .screw.br { bottom: 18px; right: 18px; }
+
+    /* ── 사이드 버튼 ── */
+    .btn-side {
+      position: absolute;
+      cursor: pointer;
+      transition: filter .1s;
+      background: linear-gradient(180deg, #2e2e2e 0%, #1e1e1e 50%, #2e2e2e 100%);
+      border: 1px solid #404040;
+    }
+    .btn-side:active { filter: brightness(.7); }
+
+    /* 왼쪽: SET (위), MODE (아래) */
+    .btn-set {
+      left: -13px; top: 56px;
+      width: 13px; height: 38px;
+      border-radius: 5px 0 0 5px;
+      border-right: none;
+      box-shadow: -3px 1px 6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .btn-mode {
+      left: -12px; top: 118px;
+      width: 12px; height: 32px;
+      border-radius: 4px 0 0 4px;
+      border-right: none;
+      box-shadow: -2px 1px 5px rgba(0,0,0,.6);
+    }
+
+    /* 오른쪽: START/STOP (위, 더 큼), LIGHT (아래) */
+    .btn-startstop {
+      right: -15px; top: 54px;
+      width: 15px; height: 42px;
+      border-radius: 0 5px 5px 0;
+      border-left: none;
+      box-shadow: 3px 1px 6px rgba(0,0,0,.6), inset 0 1px 0 rgba(255,255,255,.06);
+    }
+    .btn-light {
+      right: -12px; top: 122px;
+      width: 12px; height: 30px;
+      border-radius: 0 4px 4px 0;
+      border-left: none;
+      box-shadow: 2px 1px 5px rgba(0,0,0,.6);
+    }
+
+    /* 버튼 라벨 */
+    .btn-label {
+      position: absolute;
+      font-size: 6px; letter-spacing: .4px; color: #666;
+      white-space: nowrap; z-index: 10;
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .label-set        { left: 7px;  top: 48px; }
+    .label-mode       { left: 7px;  top: 114px; }
+    .label-startstop  { right: 7px; top: 46px; text-align: right; }
+    .label-light      { right: 8px; top: 116px; text-align: right; }
+
+    /* ═══════════════════════════════
+       DOUBLE ORANGE BEZEL + LCD
+    ═══════════════════════════════ */
+    .bezel-wrap {
+      position: relative; z-index: 5;
+      /* 바깥 오렌지 링 */
+      background: #d06a00;
+      border-radius: 10px;
+      padding: 4px;
+      box-shadow:
+        0 0 0 1px #7a3800,
+        inset 0 1px 0 rgba(255,210,90,.35),
+        inset 0 -1px 0 rgba(0,0,0,.4),
+        0 3px 12px rgba(0,0,0,.6);
+      width: 224px;
+    }
+    .bezel-gap {
+      /* 어두운 갭 */
+      background: #0e0e0e;
+      border-radius: 7px;
+      padding: 3px;
+    }
+    .bezel-inner {
+      /* 안쪽 오렌지 링 */
+      background: #b05200;
+      border-radius: 5px;
+      padding: 3px;
+      box-shadow:
+        inset 0 1px 0 rgba(255,180,60,.25),
+        inset 0 -1px 0 rgba(0,0,0,.3);
+    }
+
+    /* LCD 유리 */
+    .lcd {
+      background: #b6c89e;
+      border-radius: 3px;
+      padding: 5px 8px 5px;
+      display: flex; flex-direction: column; gap: 2px;
+      position: relative; overflow: hidden;
+    }
+    /* 도트매트릭스 */
+    .lcd::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(0,0,0,.055) 1px, transparent 1px);
+      background-size: 3px 3px;
+      pointer-events: none; z-index: 2;
+    }
+    /* 반사 */
+    .lcd::after {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 45%;
+      background: linear-gradient(180deg, rgba(255,255,255,.22) 0%, transparent 100%);
+      border-radius: 3px 3px 0 0;
+      pointer-events: none; z-index: 3;
+    }
+
+    /* LCD 상단 행: DOLPHIN 로고 + MM:SS + 상태 */
+    .lcd-top {
+      display: flex; justify-content: space-between; align-items: center;
+      position: relative; z-index: 4;
+    }
+    .lcd-logo {
+      font-size: 8px; font-weight: bold; letter-spacing: 1.5px;
+      color: #1a2c0e; font-family: 'Share Tech Mono', monospace;
+    }
+    .lcd-mmss {
+      font-size: 10px; letter-spacing: 1px; color: #1a2c0e;
+    }
+    .lcd-status {
+      font-size: 8px; letter-spacing: 1px; color: #1a2c0e; opacity: .75;
+    }
+    .lcd-status.blink { animation: blink .7s infinite; }
+    @keyframes blink { 0%,100%{opacity:.75} 50%{opacity:.1} }
+
+    /* LCD 중앙: 카드 두 장 */
+    .lcd-cards {
+      display: flex; align-items: center; justify-content: center;
+      gap: 6px; flex: 1;
+      position: relative; z-index: 4;
+      padding: 2px 0;
+    }
+    .lcd-card {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      width: 42px; height: 46px;
+      background: rgba(0,0,0,.07); border: 1px solid rgba(0,0,0,.13);
+      border-radius: 2px;
+      transition: background .2s, border-color .2s, box-shadow .2s;
+    }
+    .lcd-card.gold {
+      background: rgba(170,95,0,.2); border-color: rgba(170,95,0,.4);
+      box-shadow: 0 0 6px rgba(200,120,0,.2);
+    }
+    .lcd-card.teal {
+      background: rgba(0,75,55,.13); border-color: rgba(0,75,55,.3);
+    }
+    .lcd-card.red {
+      background: rgba(95,15,0,.1); border-color: rgba(95,15,0,.22);
+    }
+    .card-digit {
+      font-size: 30px; font-weight: bold; line-height: 1;
+      color: #1a2c0e; transition: color .2s;
+    }
+    .card-digit.live { color: #304020; }
+    .card-digit.gold { color: #3a1c00; }
+    .card-digit.teal { color: #003c2a; }
+    .card-digit.red  { color: #2c0800; }
+    .card-kanji {
+      font-size: 9px; color: #2a3c18; margin-top: 1px;
+      font-family: sans-serif; transition: color .2s;
+    }
+    .lcd-sep { font-size: 22px; color: #2a3c18; opacity: .45; line-height: 1; }
+
+    /* LCD 하단: 패 이름 */
+    .lcd-hand {
+      text-align: center;
+      font-size: 13px; letter-spacing: 3px;
+      color: #1a2c0e; line-height: 1;
+      position: relative; z-index: 4;
+      transition: color .2s, font-size .15s;
+    }
+    .lcd-hand.gold { color: #3a1c00; font-size: 14px; }
+    .lcd-hand.teal { color: #003c2a; }
+    .lcd-hand.red  { color: #2c0808; font-size: 12px; }
+    .lcd-hand.dim  { color: #3a4c22; font-size: 10px; opacity: .65; }
+
+    /* ── 케이스 하단 텍스트 ── */
+    .case-foot {
+      display: flex; justify-content: space-between;
+      width: 218px; margin-top: 4px;
+      padding: 0 2px;
+      position: relative; z-index: 5;
+    }
+    .foot-text {
+      font-size: 6px; letter-spacing: .5px; color: #555;
+    }
+
+    /* ═══════════════════════════════
+       STRAP BOTTOM
+    ═══════════════════════════════ */
+    .strap-bottom {
+      width: 196px; height: 92px;
+      background: linear-gradient(180deg, #121212 0%, #0d0d0d 100%);
+      border-radius: 0 0 24px 24px;
+      border: 2px solid #222; border-top: none;
+      position: relative;
+      display: flex; align-items: flex-end; justify-content: center;
+      padding-bottom: 18px;
+    }
+    .strap-bottom::before {
+      content: '';
+      position: absolute; top: 12px; left: 50%; transform: translateX(-50%);
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #0a0a0a; border: 1px solid #222;
+      box-shadow: 0 9px 0 1px #0a0a0a, 0 18px 0 1px #0a0a0a, 0 27px 0 1px #0a0a0a;
+    }
+    .strap-brand {
+      font-size: 15px; font-weight: bold; letter-spacing: 5px;
+      color: #c86000; font-style: italic;
+      text-shadow: 0 0 8px rgba(200,100,0,.3);
+    }
+
+    /* ═══════════════════════════════
+       ON-SCREEN CONTROLS
+    ═══════════════════════════════ */
+    .ctrl-row { display: flex; gap: 12px; margin-top: 16px; }
+    .ctrl-btn {
+      padding: 9px 24px; border: none; border-radius: 18px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 12px; font-weight: bold; letter-spacing: 2px;
+      cursor: pointer; transition: transform .1s, filter .1s;
+    }
+    .ctrl-btn:active { transform: scale(.94); filter: brightness(.8); }
+    #btnMain {
+      background: linear-gradient(135deg, #a85000, #e07000);
+      color: #fff8f0;
+      box-shadow: 0 3px 14px rgba(200,100,0,.45);
+    }
+    #btnMain.stopping {
+      background: linear-gradient(135deg, #333, #555);
+      color: #ffcc44;
+      box-shadow: 0 3px 10px rgba(0,0,0,.5);
+    }
+    #btnReset {
+      background: #1c1c1c; color: #666;
+      border: 1px solid #2e2e2e;
+    }
+    .hint-bar { margin-top: 7px; font-size: 10px; color: #383838; letter-spacing: 1px; }
+
+    /* ═══════════════════════════════
+       OVERLAY EFFECT
+    ═══════════════════════════════ */
+    #overlay {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 300; opacity: 0;
+    }
+    #overlay.show { animation: ovAnim 2.4s ease-out forwards; }
+    @keyframes ovAnim {
+      0%  { opacity:0; background:rgba(0,0,0,0); }
+      8%  { opacity:1; background:rgba(180,80,0,.22); }
+      55% { opacity:1; background:rgba(180,80,0,.08); }
+      100%{ opacity:0; background:rgba(0,0,0,0); }
+    }
+    .ov-main {
+      font-size: clamp(46px,11vw,86px); font-weight:900;
+      font-family: 'Share Tech Mono', monospace;
+      animation: pop .4s cubic-bezier(.17,.67,.35,1.4) both;
+    }
+    .ov-sub {
+      font-size: 18px; letter-spacing: 5px; margin-top: 8px;
+      animation: pop .5s .06s cubic-bezier(.17,.67,.35,1.4) both;
+    }
+    @keyframes pop { from{transform:scale(.1);opacity:0} to{transform:scale(1);opacity:1} }
+    .p {
+      position: fixed; width: 7px; height: 7px; border-radius: 50%;
+      pointer-events: none; z-index: 299;
+      animation: pfly var(--d,.9s) var(--dl,0s) ease-out forwards;
+    }
+    @keyframes pfly {
+      0%  { transform:translate(0,0) scale(1); opacity:1; }
+      100%{ transform:translate(var(--tx),var(--ty)) scale(0); opacity:0; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- strap top -->
+<div class="strap-top"></div>
+
+<!-- watch case -->
+<div class="watch-case">
+
+  <!-- 나사 4개 -->
+  <div class="screw tl"></div>
+  <div class="screw tr"></div>
+  <div class="screw bl"></div>
+  <div class="screw br"></div>
+
+  <!-- 왼쪽 버튼 -->
+  <div class="btn-side btn-set"  title="SET"></div>
+  <div class="btn-side btn-mode" title="MODE" id="sBtnMode" onclick="doReset()"></div>
+
+  <!-- 오른쪽 버튼 -->
+  <div class="btn-side btn-startstop" title="START/STOP" id="sBtnStart" onclick="toggle()"></div>
+  <div class="btn-side btn-light" title="LIGHT"></div>
+
+  <!-- 버튼 라벨 -->
+  <span class="btn-label label-set">SET</span>
+  <span class="btn-label label-mode">MODE</span>
+  <span class="btn-label label-startstop">START/STOP</span>
+  <span class="btn-label label-light">LIGHT</span>
+
+  <!-- 이중 오렌지 베젤 + LCD -->
+  <div class="bezel-wrap">
+    <div class="bezel-gap">
+      <div class="bezel-inner">
+        <div class="lcd">
+
+          <!-- 상단 행 -->
+          <div class="lcd-top">
+            <span class="lcd-logo">DOLPHIN</span>
+            <span class="lcd-mmss" id="lcdMmss">00:00</span>
+            <span class="lcd-status" id="lcdStatus">READY</span>
+          </div>
+
+          <!-- 카드 두 장 (100분의 1초) -->
+          <div class="lcd-cards">
+            <div class="lcd-card" id="card0">
+              <div class="card-digit" id="cnum0">0</div>
+              <div class="card-kanji" id="ckan0">장</div>
+            </div>
+            <span class="lcd-sep">:</span>
+            <div class="lcd-card" id="card1">
+              <div class="card-digit" id="cnum1">0</div>
+              <div class="card-kanji" id="ckan1">장</div>
+            </div>
+          </div>
+
+          <!-- 패 이름 -->
+          <div class="lcd-hand dim" id="lcdHand">- STOP -</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 케이스 하단 라벨 -->
+  <div class="case-foot">
+    <span class="foot-text">SPLIT/RESET</span>
+    <span class="foot-text">WR 100M</span>
+  </div>
+
+</div><!-- /watch-case -->
+
+<!-- strap bottom -->
+<div class="strap-bottom">
+  <div class="strap-brand">DOLPHIN</div>
+</div>
+
+<!-- 컨트롤 -->
+<div class="ctrl-row">
+  <button class="ctrl-btn" id="btnMain" onclick="toggle()">START</button>
+  <button class="ctrl-btn" id="btnReset" onclick="doReset()">RESET</button>
+</div>
+<div class="hint-bar" id="hintBar">SPACE = 시작/정지 &nbsp;·&nbsp; R = 리셋</div>
+
+<!-- 이펙트 오버레이 -->
+<div id="overlay">
+  <div class="ov-main" id="ovMain"></div>
+  <div class="ov-sub"  id="ovSub"></div>
+</div>
+
+<script>
+/* ── 카드 한자 ── */
+const KAN = ['장','일','이','삼','사','오','육','칠','팔','구'];
+
+/* ── 섯다 족보 ── */
+function evalHand(a, b) {
+  const lo = Math.min(a,b), hi = Math.max(a,b);
+  if (lo===3&&hi===8) return {name:'삼팔광땡', rank:1,  tier:'gold'};
+  if (lo===1&&hi===8) return {name:'십팔광땡', rank:2,  tier:'gold'};
+  if (lo===1&&hi===3) return {name:'십삼광땡', rank:3,  tier:'gold'};
+  if (lo===hi) {
+    const ns=['장땡','일땡','이땡','삼땡','사땡','오땡','육땡','칠땡','팔땡','구땡'];
+    return {name:ns[lo], rank:lo===0?13:(13-lo), tier:lo>=7?'gold':lo>=4?'teal':'red'};
+  }
+  if (lo===1&&hi===2) return {name:'알  리', rank:14, tier:'teal'};
+  if (lo===1&&hi===4) return {name:'독  사', rank:15, tier:'teal'};
+  if (lo===1&&hi===9) return {name:'구  삥', rank:16, tier:'teal'};
+  if (lo===0&&hi===1) return {name:'장  삥', rank:17, tier:'teal'};
+  if (lo===0&&hi===4) return {name:'장  사', rank:18, tier:'red'};
+  if (lo===3&&hi===6) return {name:'세  륙', rank:19, tier:'red'};
+  const kk = (a+b)%10;
+  if (kk===0) return {name:'망  통', rank:30, tier:'dim'};
+  const kn=['','일끗','이끗','삼끗','사끗','오끗','육끗','칠끗','팔끗','구끗'];
+  return {name:kn[kk], rank:29-kk, tier:kk>=7?'red':'dim'};
+}
+function rankLabel(r) {
+  const m={1:'광땡 최강',2:'광땡 2위',3:'광땡 3위',4:'9땡',5:'8땡',6:'7땡',7:'6땡',8:'5땡',9:'4땡',10:'3땡',11:'2땡',12:'1땡',13:'장땡',14:'알리',15:'독사',16:'구삥',17:'장삥',18:'장사',19:'세륙'};
+  if (m[r]) return `[ ${m[r]} ]`;
+  if (r<=28) return `[ ${29-r}끗 ]`;
+  return '[ 망통 ]';
+}
+
+/* ── state ── */
+let t0=0, elapsed=0, raf=null, running=false;
+
+const $mmss   = document.getElementById('lcdMmss');
+const $status = document.getElementById('lcdStatus');
+const $hand   = document.getElementById('lcdHand');
+const $hint   = document.getElementById('hintBar');
+const $btnM   = document.getElementById('btnMain');
+
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function draw(ms) {
+  const tc=Math.floor(ms/10), cs=tc%100, sec=Math.floor(tc/100)%60, min=Math.floor(tc/6000);
+  const d0=Math.floor(cs/10), d1=cs%10;
+  $mmss.textContent = pad(min)+':'+pad(sec);
+  document.getElementById('cnum0').textContent = d0;
+  document.getElementById('cnum1').textContent = d1;
+  document.getElementById('ckan0').textContent = KAN[d0];
+  document.getElementById('ckan1').textContent = KAN[d1];
+}
+
+function render(){ elapsed=Date.now()-t0; draw(elapsed); raf=requestAnimationFrame(render); }
+
+function toggle(){ running ? doStop() : doStart(); }
+
+function doStart() {
+  t0=Date.now()-elapsed; running=true;
+  raf=requestAnimationFrame(render);
+  $btnM.textContent='STOP'; $btnM.classList.add('stopping');
+  $status.textContent='RUN'; $status.classList.add('blink');
+  $hand.textContent='- - - -'; $hand.className='lcd-hand dim';
+  $hint.textContent='지금 멈추면 이 패!';
+  ['card0','card1'].forEach(id=>{ document.getElementById(id).className='lcd-card'; });
+  ['cnum0','cnum1'].forEach(id=>{ document.getElementById(id).className='card-digit live'; });
+}
+
+function doStop() {
+  cancelAnimationFrame(raf); running=false; draw(elapsed);
+  $btnM.textContent='START'; $btnM.classList.remove('stopping');
+  $status.textContent='STOP'; $status.classList.remove('blink');
+  evaluate();
+}
+
+function doReset() {
+  cancelAnimationFrame(raf); running=false; elapsed=0; draw(0);
+  $btnM.textContent='START'; $btnM.classList.remove('stopping');
+  $status.textContent='READY'; $status.classList.remove('blink');
+  $hand.textContent='- STOP -'; $hand.className='lcd-hand dim';
+  $hint.textContent='SPACE = 시작/정지 · R = 리셋';
+  ['card0','card1'].forEach(id=>{ document.getElementById(id).className='lcd-card'; });
+  ['cnum0','cnum1'].forEach(id=>{ document.getElementById(id).className='card-digit'; });
+}
+
+function evaluate() {
+  const tc=Math.floor(elapsed/10), cs=tc%100, sec=Math.floor(tc/100)%60, min=Math.floor(tc/6000);
+  const d0=Math.floor(cs/10), d1=cs%10;
+  const hand=evalHand(d0,d1);
+
+  ['card0','card1'].forEach(id=>{ document.getElementById(id).className='lcd-card '+hand.tier; });
+  ['cnum0','cnum1'].forEach(id=>{ document.getElementById(id).className='card-digit '+hand.tier; });
+
+  $hand.textContent=hand.name; $hand.className='lcd-hand '+hand.tier;
+  $hint.textContent=`${pad(min)}:${pad(sec)}.${pad(cs)} 에서 멈춤`;
+
+  if      (hand.rank===1) boom('삼팔광땡!','최강패!',  70,'#ffd700','#ff9922');
+  else if (hand.rank<=3)  boom(hand.name.trim(),'광땡!',50,'#ffd700','#ff9922');
+  else if (hand.rank<=7)  boom(hand.name.trim(),'',     28,'#c8d880','#90a040');
+  else if (hand.rank<=13) boom(hand.name.trim(),'',     14,'#90c0a0','#508060');
+}
+
+function boom(main,sub,count,cm,cs2) {
+  const ov=document.getElementById('overlay');
+  document.getElementById('ovMain').textContent=main;
+  document.getElementById('ovMain').style.color=cm;
+  document.getElementById('ovMain').style.textShadow=`0 0 20px ${cm},0 0 50px ${cm}99`;
+  document.getElementById('ovSub').textContent=sub;
+  document.getElementById('ovSub').style.color=cs2;
+  ov.classList.remove('show'); void ov.offsetWidth; ov.classList.add('show');
+  setTimeout(()=>ov.classList.remove('show'),2500);
+  const cx=innerWidth/2, cy=innerHeight/2;
+  for(let i=0;i<count;i++){
+    const p=document.createElement('div'); p.className='p';
+    const a=Math.random()*Math.PI*2, d=70+Math.random()*320;
+    p.style.setProperty('--tx',Math.cos(a)*d+'px');
+    p.style.setProperty('--ty',(Math.sin(a)*d-70)+'px');
+    p.style.setProperty('--d',(.6+Math.random()*.9)+'s');
+    p.style.setProperty('--dl',(Math.random()*.3)+'s');
+    p.style.background=[cm,'#fff',cs2][i%3];
+    p.style.left=cx+'px'; p.style.top=cy+'px';
+    document.body.appendChild(p); setTimeout(()=>p.remove(),2400);
+  }
+}
+
+document.addEventListener('keydown',e=>{
+  if(e.code==='Space'){e.preventDefault();toggle();}
+  if(e.code==='KeyR'||e.code==='Escape') doReset();
+});
+</script>
+</body>
+</html>
